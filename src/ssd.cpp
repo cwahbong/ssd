@@ -2,6 +2,58 @@
 
 namespace ssd {
 
+Match::Match(const char * name):
+    m_match(true, name)
+{/* Empty. */}
+
+Match::Match(const std::string & name):
+    m_match(true, name)
+{/* Empty. */}
+
+Match::Match(std::string && name):
+    m_match(true, std::move(name))
+{/* Empty. */}
+
+Match::Match(NomatchType):
+    m_match(false, std::string())
+{/* Empty. */}
+
+bool
+operator<(const Match & lhs, const Match & rhs)
+{
+    return lhs.m_match < rhs.m_match;
+}
+
+bool
+operator<=(const Match & lhs, const Match & rhs)
+{
+    return lhs.m_match <= rhs.m_match;
+}
+
+bool
+operator>(const Match & lhs, const Match & rhs)
+{
+    return lhs.m_match > rhs.m_match;
+}
+
+bool
+operator>=(const Match & lhs, const Match & rhs)
+{
+    return lhs.m_match >= rhs.m_match;
+}
+
+bool
+operator==(const Match & lhs, const Match & rhs)
+{
+    return lhs.m_match == rhs.m_match;
+}
+
+bool
+operator!=(const Match & lhs, const Match & rhs)
+{
+    return lhs.m_match != rhs.m_match;
+}
+
 Command::Command(const std::function<int(int, char **)> & function):
     m_function(function),
     m_map()
@@ -12,17 +64,17 @@ Command::Command(std::function<int(int, char **)> && function):
     m_map()
 {/* Empty. */}
 
-Command::Command(const std::map<std::string, Command> & map):
+Command::Command(const std::map<Match, Command> & map):
     m_function(),
     m_map(map)
 {/* Empty. */}
 
-Command::Command(std::map<std::string, Command> && map):
+Command::Command(std::map<Match, Command> && map):
     m_function(),
     m_map(std::move(map))
 {/* Empty. */}
 
-Command::Command(std::initializer_list<std::pair<const std::string, Command>> list):
+Command::Command(std::initializer_list<std::pair<const Match, Command>> list):
     m_function(),
     m_map(list)
 {/* Empty. */}
@@ -49,7 +101,7 @@ MainCommand::MainCommand(const Command & command): m_command(command)
 MainCommand::MainCommand(Command && command): m_command(std::move(command))
 {/* Empty. */}
 
-MainCommand::MainCommand(std::initializer_list<std::pair<const std::string, Command>> list):
+MainCommand::MainCommand(std::initializer_list<std::pair<const Match, Command>> list):
     m_command(list)
 {/* Empty. */}
 

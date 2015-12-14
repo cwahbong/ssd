@@ -1,7 +1,29 @@
-#include <map>
 #include <functional>
+#include <map>
+#include <tuple>
 
 namespace ssd {
+
+struct NomatchType {};
+constexpr NomatchType nomatch{};
+
+class Match {
+public:
+    Match(const char * name);
+    Match(const std::string & name);
+    Match(std::string && name);
+    Match(NomatchType nomatch);
+
+    friend bool operator<(const Match &, const Match &);
+    friend bool operator<=(const Match &, const Match &);
+    friend bool operator>(const Match &, const Match &);
+    friend bool operator>=(const Match &, const Match &);
+    friend bool operator==(const Match &, const Match &);
+    friend bool operator!=(const Match &, const Match &);
+
+private:
+    std::tuple<bool, std::string> m_match;
+};
 
 class Command {
 public:
@@ -14,22 +36,22 @@ public:
     Command(const std::function<int(int, char **)> & function);
     Command(std::function<int(int, char **)> && function);
 
-    Command(const std::map<std::string, Command> & map);
-    Command(std::map<std::string, Command> && map);
-    Command(std::initializer_list<std::pair<const std::string, Command>> list);
+    Command(const std::map<Match, Command> & map);
+    Command(std::map<Match, Command> && map);
+    Command(std::initializer_list<std::pair<const Match, Command>> list);
 
     int operator() (int argc, char ** argv) const;
 
 private:
     std::function<int(int, char **)> m_function;
-    std::map<std::string, Command> m_map;
+    std::map<Match, Command> m_map;
 };
 
 class MainCommand {
 public:
     MainCommand(const Command & command);
     MainCommand(Command && command);
-    MainCommand(std::initializer_list<std::pair<const std::string, Command>> list);
+    MainCommand(std::initializer_list<std::pair<const Match, Command>> list);
 
     int operator() (int argc, char ** argv) const;
 

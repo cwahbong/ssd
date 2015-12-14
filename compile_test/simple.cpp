@@ -9,3 +9,11 @@ simple_lambda()
         {"c", [](int, char **){ return 0; }},
     };
 }
+
+ssd::MainCommand
+simple_nomatch()
+{
+    return {
+        {ssd::nomatch, std::function<int(int, char **)>()},
+    };
+}
